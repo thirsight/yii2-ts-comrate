@@ -4,7 +4,6 @@ namespace ts\comrate\models;
 
 use Yii;
 use yii\console\Exception;
-use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -18,15 +17,8 @@ use yii\helpers\ArrayHelper;
  * @property integer $created_at
  * @property integer $updated_at
  */
-class Rate extends ActiveRecord
+class Rate extends \ts\base\BaseModel
 {
-    public function behaviors()
-    {
-        return [
-            \yii\behaviors\TimestampBehavior::className(),
-        ];
-    }
-
     /**
      * @inheritdoc
      */
