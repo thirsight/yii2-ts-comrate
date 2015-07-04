@@ -11,8 +11,8 @@ use yii\helpers\ArrayHelper;
  * This is the model class for table "rate".
  *
  * @property integer $rate_id
- * @property string $rate_model
- * @property integer $rate_model_pk
+ * @property string $model_class
+ * @property integer $model_pk
  * @property integer $user_id
  * @property string $rate
  * @property integer $created_at
@@ -41,12 +41,12 @@ class Rate extends ActiveRecord
     public function rules()
     {
         return [
-            [['rate_model', 'rate_model_pk', 'user_id', 'rating'], 'trim'],
-            [['rate_model', 'rate_model_pk', 'user_id', 'rating'], 'required'],
-            [['rate_model_pk', 'user_id'], 'integer'],
+            [['model_class', 'model_pk', 'user_id', 'rating'], 'trim'],
+            [['model_class', 'model_pk', 'user_id', 'rating'], 'required'],
+            [['model_pk', 'user_id'], 'integer'],
             [['rating'], 'number'],
-            [['rate_model'], 'string', 'max' => 128],
-            [['rate_model_pk', 'user_id'], 'unique', 'targetAttribute' => ['rate_model', 'rate_model_pk', 'user_id']],
+            [['model_class'], 'string', 'max' => 128],
+            [['model_pk', 'user_id'], 'unique', 'targetAttribute' => ['model_class', 'model_pk', 'user_id']],
         ];
     }
 
@@ -57,8 +57,8 @@ class Rate extends ActiveRecord
     {
         return [
             'rate_id' => Yii::t('rate', 'Rate ID'),
-            'rate_model' => Yii::t('rate', 'Rate Model'),
-            'rate_model_pk' => Yii::t('rate', 'Rate Model Pk'),
+            'model_class' => Yii::t('rate', 'Rate Model'),
+            'model_pk' => Yii::t('rate', 'Rate Model Pk'),
             'user_id' => Yii::t('rate', 'User ID'),
             'rating' => Yii::t('rate', 'Rate'),
             'created_at' => Yii::t('rate', 'Created At'),
@@ -77,8 +77,8 @@ class Rate extends ActiveRecord
     public static function create($rateModelClass, $rateModelId, $rating)
     {
         $rate = new self();
-        $rate->rate_model = $rateModelClass;
-        $rate->rate_model_pk = $rateModelId;
+        $rate->model_class = $rateModelClass;
+        $rate->model_pk = $rateModelId;
         $rate->user_id = Yii::$app->getUser()->id;
         $rate->rating = $rating;
         $rate->save();
@@ -125,7 +125,7 @@ class Rate extends ActiveRecord
         try {
             // Get all rates by model and model_id
             $rates = self::find()
-                ->where(['rate_model' => $model::className()])
+                ->where(['model_class' => $model::className()])
                 ->andWhere(['model_id' => $model->id])
                 ->asArray()
                 ->all();
