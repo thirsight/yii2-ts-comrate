@@ -14,7 +14,7 @@ use Yii;
  * @property string $comm_ip
  * @property string $comm_agent
  * @property integer $user_id
- * @property string $model_class
+ * @property string $model_table
  * @property string $model_pk
  * @property integer $created_at
  * @property integer $updated_at
@@ -40,8 +40,8 @@ class Comment extends \ts\base\BaseModel
     public function rules()
     {
         return [
-            [['comm_content', 'model_class', 'model_pk'], 'trim'],
-            [['comm_content', 'model_class', 'model_pk'], 'required'],
+            [['comm_content', 'model_table', 'model_pk'], 'trim'],
+            [['comm_content', 'model_table', 'model_pk'], 'required'],
             [['comm_parent', 'user_id'], 'integer'],
             [['comm_parent'], 'default', 'value' => 0],
 
@@ -66,7 +66,7 @@ class Comment extends \ts\base\BaseModel
             'comm_ip' => Yii::t('ts', 'Comm Ip'),
             'comm_agent' => Yii::t('ts', 'Comm Agent'),
             'user_id' => Yii::t('ts', 'User ID'),
-            'model_class' => Yii::t('ts', 'Model Class'),
+            'model_table' => Yii::t('ts', 'Model Table'),
             'model_pk' => Yii::t('ts', 'Model Pk'),
             'created_at' => Yii::t('ts', 'Created At'),
             'updated_at' => Yii::t('ts', 'Updated At'),
@@ -74,19 +74,19 @@ class Comment extends \ts\base\BaseModel
     }
 
     /**
-     * @param $content
-     * @param $modelClass
+     * @param $modelTable
      * @param $modelPk
+     * @param $content
      * @return Comment
      */
-    public static function create($content, $modelClass, $modelPk)
+    public static function create($modelTable, $modelPk, $content)
     {
         $model = new self();
         $model->comm_ip    = Yii::$app->request->userIP;
         $model->comm_agent = Yii::$app->request->userAgent;
         $model->user_id    = Yii::$app->user->id;
         $model->comm_content = $content;
-        $model->model_class  = $modelClass;
+        $model->model_table  = $modelTable;
         $model->model_pk     = $modelPk;
         $model->save();
 

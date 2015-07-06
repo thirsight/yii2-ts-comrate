@@ -5,12 +5,13 @@ namespace ts\comrate\models;
 use Yii;
 use yii\console\Exception;
 use yii\helpers\ArrayHelper;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "rate".
  *
  * @property integer $rate_id
- * @property string $model_class
+ * @property string $model_table
  * @property integer $model_pk
  * @property integer $user_id
  * @property string $rate
@@ -33,12 +34,11 @@ class Rate extends \ts\base\BaseModel
     public function rules()
     {
         return [
-            [['model_class', 'model_pk', 'user_id', 'rating'], 'trim'],
-            [['model_class', 'model_pk', 'user_id', 'rating'], 'required'],
+            [['model_table', 'model_pk', 'user_id', 'rating'], 'trim'],
+            [['model_table', 'model_pk', 'user_id', 'rating'], 'required'],
             [['model_pk', 'user_id'], 'integer'],
             [['rating'], 'number'],
-            [['model_class'], 'string', 'max' => 128],
-            [['model_pk', 'user_id'], 'unique', 'targetAttribute' => ['model_class', 'model_pk', 'user_id']],
+            [['model_pk', 'user_id'], 'unique', 'targetAttribute' => ['model_table', 'model_pk', 'user_id']],
         ];
     }
 
@@ -49,10 +49,10 @@ class Rate extends \ts\base\BaseModel
     {
         return [
             'rate_id' => Yii::t('rate', 'Rate ID'),
-            'model_class' => Yii::t('rate', 'Rate Model'),
-            'model_pk' => Yii::t('rate', 'Rate Model Pk'),
+            'model_table' => Yii::t('rate', 'Model Table'),
+            'model_pk' => Yii::t('rate', 'Model Pk'),
             'user_id' => Yii::t('rate', 'User ID'),
-            'rating' => Yii::t('rate', 'Rate'),
+            'rating' => Yii::t('rate', 'Rating'),
             'created_at' => Yii::t('rate', 'Created At'),
             'updated_at' => Yii::t('rate', 'Updated At'),
         ];
@@ -61,16 +61,16 @@ class Rate extends \ts\base\BaseModel
     /**
      * Create rate
      *
-     * @param $rateModelClass
-     * @param $rateModelId
+     * @param $modelTable
+     * @param $modelPk
      * @param $rating
-     * @return string|Rate
+     * @return Rate
      */
-    public static function create($rateModelClass, $rateModelId, $rating)
+    public static function create($modelTable, $modelPk, $rating)
     {
         $rate = new self();
-        $rate->model_class = $rateModelClass;
-        $rate->model_pk = $rateModelId;
+        $rate->model_table = $modelTable;
+        $rate->model_pk = $modelPk;
         $rate->user_id = Yii::$app->getUser()->id;
         $rate->rating = $rating;
         $rate->save();
@@ -96,6 +96,13 @@ class Rate extends \ts\base\BaseModel
         return 0;
     }
 
+    /**
+     * 判断用户是否已经评分过了
+     *
+     * @param $rates
+     * @param $userId
+     * @return bool
+     */
     public static function isUserRated($rates, $userId)
     {
         if ($rates && is_array($rates) && $userId) {
@@ -109,15 +116,15 @@ class Rate extends \ts\base\BaseModel
     /**
      * Get total rating by model
      *
-     * @param \yii\db\ActiveRecord $model
-     * @return int|mixed
+     * @param ActiveRecord $model
+     * @return int
      */
     public static function getTotalRating(ActiveRecord $model)
     {
         try {
             // Get all rates by model and model_id
             $rates = self::find()
-                ->where(['model_class' => $model::className()])
+                ->where(['model_table' => $model::tableName()])
                 ->andWhere(['model_id' => $model->id])
                 ->asArray()
                 ->all();
@@ -133,7 +140,7 @@ class Rate extends \ts\base\BaseModel
 
             return $totalRating;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Yii::error($e->getMessage(), self::className() . '->getTotalRating()');
             return 0;
         }
@@ -142,10 +149,10 @@ class Rate extends \ts\base\BaseModel
     /**
      * Get rating by model source
      *
-     * @param \yii\db\ActiveRecord $model
-     * @return int|mixed
+     * @param ActiveRecord $model
+     * @return int
      */
-    public static function getRatingByModel($model)
+    public static function getRatingByModel(ActiveRecord $model)
     {
         try {
 
