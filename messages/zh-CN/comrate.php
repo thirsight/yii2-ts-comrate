@@ -1,0 +1,1 @@
+<?phpreturn [    'Submit' => '提交',    'Cancel' => '取消',    'Leave a comment' => '发表评论',    'Please entry content.' => '请输入内容',    'Comment has been post.' => '评论已发布',];
