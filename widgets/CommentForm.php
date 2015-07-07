@@ -2,6 +2,7 @@
 
 namespace ts\comrate\widgets;
 
+use Yii;
 use yii\helpers\Html;
 use yii\helpers\Json;
 
@@ -21,7 +22,7 @@ class CommentForm extends \yii\bootstrap\Widget
 
         $this->clientOptions = array_merge([
             'container' => 'body',
-            'title' => 'Leave a comment',
+            'title' => Yii::t('comrate', 'Leave a comment'),
             'placement' => 'bottom',
             'trigger' => 'click',
             'html' => true,
@@ -41,6 +42,13 @@ class CommentForm extends \yii\bootstrap\Widget
     protected function renderPopover()
     {
         if (empty($this->clientOptions['content'])) {
+            $labels = [
+                'submit' => Yii::t('comrate', 'Submit'),
+                'cancel' => Yii::t('comrate', 'Cancel'),
+                'danger' => Yii::t('comrate', 'Please entry content.'),
+                'success' => Yii::t('comrate', 'Comment has been post.'),
+            ];
+
             $this->clientOptions['content'] = <<<EOD
 
 <form name="leave-a-comment">
@@ -48,10 +56,10 @@ class CommentForm extends \yii\bootstrap\Widget
     <div class="form-group">
         <textarea class="form-control" name="content" rows="4"></textarea>
     </div>
-    <button type="button" class="btn btn-default btn-sm" name="submit">Submit</button>
-    <button type="button" class="btn btn-link btn-sm" data-dismiss="popover">Cancel</button>
-    <span class="text-danger hide">Please entry content.</span>
-    <span class="text-success hide">Comment has been post.</span>
+    <button type="button" class="btn btn-default btn-sm" name="submit">{$labels['submit']}</button>
+    <button type="button" class="btn btn-link btn-sm" data-dismiss="popover">{$labels['cancel']}</button>
+    <span class="text-danger hide">{$labels['danger']}</span>
+    <span class="text-success hide">{$labels['success']}</span>
 </from>
 EOD;
         }
