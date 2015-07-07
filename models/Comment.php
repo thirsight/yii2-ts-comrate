@@ -44,7 +44,7 @@ class Comment extends \ts\base\BaseModel
             [['comm_content', 'model_table', 'model_pk'], 'filter', 'filter' => 'strip_tags'],
             [['comm_content', 'model_table', 'model_pk'], 'required'],
             [['comm_parent', 'user_id'], 'integer'],
-            [['comm_parent'], 'default', 'value' => 0],
+            [['comm_parent', 'user_id'], 'default', 'value' => 0],
 
             [['comm_content'], 'string'],
             [['comm_content'], 'filter', 'filter' => '\ts\base\Filter::mergeBlank'],

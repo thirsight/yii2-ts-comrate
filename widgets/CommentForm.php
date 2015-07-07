@@ -77,9 +77,14 @@ jQuery('{$this->clientOptions['selector']}').on("shown.bs.popover", function() {
         if (jQuery.trim(oFields[1].value) == "") {
             oForm.find("span.text-danger").removeClass("hide");
         } else {
-            oForm.find("span.text-success").removeClass("hide");
-            oForm.find("textarea").prop("disabled", true);
-            jQuery.get("{$this->urlCreateComment}", oFields);
+            jQuery.get("{$this->urlCreateComment}", oFields, function(msg) {
+                if (jQuery.isNumeric(msg)) {
+                    oForm.find("span.text-success").removeClass("hide");
+                    oForm.find("textarea").prop("disabled", true);
+                } else {
+                    alert(msg);
+                }
+            });
         }
     });
 });
